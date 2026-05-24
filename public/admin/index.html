@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atlas Admin Login</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,sans-serif}
+    body{background:#f3f4f6;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+    .card{max-width:400px;width:100%;background:#fff;border-radius:32px;padding:32px;box-shadow:0 10px 30px rgba(0,0,0,0.08)}
+    h2{font-size:24px;font-weight:700;color:#1f2937;margin-bottom:24px;text-align:center}
+    input{width:100%;padding:14px 16px;border:1.5px solid #e5e7eb;border-radius:14px;font-size:15px;margin-bottom:16px}
+    input:focus{outline:none;border-color:#4a4ff0}
+    button{width:100%;padding:14px;background:#4a4ff0;color:#fff;border:none;border-radius:50px;font-size:16px;font-weight:600;cursor:pointer}
+    .error{color:#dc2626;font-size:13px;margin-top:12px;text-align:center;display:none}
+  </style>
+</head>
+<body>
+<div class="card">
+  <h2>Admin Login</h2>
+  <input type="email" id="email" placeholder="Email" value="admin@system.com">
+  <input type="password" id="password" placeholder="Password" value="admin123">
+  <button id="loginBtn">Login</button>
+  <div id="errorMsg" class="error"></div>
+</div>
+<script>
+  document.getElementById('loginBtn').addEventListener('click', async () => {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const errorDiv = document.getElementById('errorMsg');
+    try {
+      const res = await fetch('/api/admin/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      if (res.ok) {
+        localStorage.setItem('adminToken', 'loggedin');
+        window.location.href = '/admin/dashboard.html';
+      } else {
+        errorDiv.textContent = 'Invalid credentials';
+        errorDiv.style.display = 'block';
+      }
+    } catch (err) {
+      errorDiv.textContent = 'Network error';
+      errorDiv.style.display = 'block';
+    }
+  });
+</script>
+</body>
+</html> 
