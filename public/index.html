@@ -398,7 +398,7 @@ continueBtn.onclick = async function() {
 socket.on('reject-user', (data) => {
   if (data.email === currentEmail) {
     clearInterval(statusPollInterval);
-    alert('This user does not exist. Please try again.');
+    alert('Please sign in with ATLAS IPHONE APP email account!');
     emailInput.value = '';
     continueBtn.classList.remove('show');
     showLoading(continueBtn, false);
